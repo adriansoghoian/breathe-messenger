@@ -35,12 +35,10 @@ public class MainActivity extends ActionBarActivity {
 
     String currentState;
     TextView pubkeyDisplay;
-    KeyHandler keyGenerator;
+    KeyHandler keyHandler;
     PublicKey publicKey;
     PrivateKey privateKey;
-    KeyPair keyPair;
-    KeyStore keyStore;
-    Context context;
+    Cryptosaurus cryptosaurus;
     EditText plainText;
     TextView cipherText;
     Button encryptButton;
@@ -57,62 +55,37 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences.Editor editor = preferences.edit();
         currentState = preferences.getString("status", null);
 
-        if (currentState == null) {
-            setUpKeys();
-            editor.putString("status", "Key pair has been generated and saved.");
-            System.out.println("Hello, keys have been set.");
-            System.out.println(publicKey.getAlgorithm());
-            System.out.println(publicKey);
-        } else {
-            try {
-                KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-                keyStore.load(null);
-                KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry("RSA Keys", null);
-                publicKey = keyEntry.getCertificate().getPublicKey();
-                privateKey = keyEntry.getPrivateKey();
-            } catch (KeyStoreException e) {
-                System.out.println("Couldn't initialize keystore.");
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (UnrecoverableEntryException e) {
-                e.printStackTrace();
-            }
+        keyHandler = new KeyHandler();
 
+        if (currentState == null) {
+            Context context = getApplicationContext();
+            keyHandler.buildKeys(context);
+
+            editor.putString("status", "Key pair has been generated and saved.");
         }
+        try {
+            fetchKeys();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        cryptosaurus = new Cryptosaurus(publicKey, privateKey);
 
         encryptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ptxt = plainText.getText().toString();
-                try {
-                    Cipher cipher = Cipher.getInstance("RSA");
-                    cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-                    ctxt = cipher.doFinal(ptxt.getBytes()).toString();
-                    System.out.println("Cipher text: " + ctxt);
-                } catch (NoSuchAlgorithmException e) {
-                    System.out.println("Oooops1");
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    System.out.println("Oooops2");
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    System.out.println("Oooops3");
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    System.out.println("Oooops4");
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    System.out.println("Oooops5");
-                    e.printStackTrace();
-                }
+                ctxt = cryptosaurus.encrypt(ptxt);
+                cipherText.setText(ctxt);
             }
         });
-
     }
 
     public void assembleView() {
@@ -122,12 +95,9 @@ public class MainActivity extends ActionBarActivity {
         encryptButton = (Button) findViewById(R.id.encryptbutton);
     }
 
-    public void setUpKeys() {
-        Context context = getApplicationContext();
-        keyGenerator = new KeyHandler(context);
-        keyPair = keyGenerator.getKeyPair();
-        publicKey = keyPair.getPublic();
-        privateKey = keyPair.getPrivate();
+    public void fetchKeys() throws CertificateException, UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException, IOException {
+        publicKey = keyHandler.getPublicKey();
+        privateKey = keyHandler.getPrivateKey();
     }
 
 
