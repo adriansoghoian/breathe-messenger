@@ -17,6 +17,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -29,6 +42,8 @@ import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -46,11 +61,13 @@ public class MainActivity extends ActionBarActivity {
     Button new_conversation;
     Cursor c;
     Cursor c_temp;
+    HttpClient httpClient;
     int i;
     KeyHandler keyHandler;
     ListView conversationListUI;
     PublicKey publicKey;
     PrivateKey privateKey;
+    String pin;
     Cryptosaurus cryptosaurus;
     String sqlQuery;
     String recipientID;
@@ -68,16 +85,19 @@ public class MainActivity extends ActionBarActivity {
         currentState = preferences.getString("status", null);
 
         keyHandler = new KeyHandler();
-        dbExists = dbExists();
+        System.out.println("Current state is: " + currentState);
 
-        if (dbExists) {
-            System.out.println("The DB exists; this app has been run before.");
-        } else {
+        System.out.println("We're in the create method!");
+        if (currentState == null) {
+            buildDB();
+            registerUser();
             Context context = getApplicationContext();
             keyHandler.buildKeys(context);
-            editor.putString("status", "Key pair has been generated and saved.");
+            editor.putString("status", "success");
+            editor.commit();
+        } else {
+            System.out.println("The app has been run before.");
         }
-        buildDB();
         assembleView(this);
         try {
             fetchKeys();
@@ -146,20 +166,31 @@ public class MainActivity extends ActionBarActivity {
         privateKey = keyHandler.getPrivateKey();
     }
 
-    public boolean dbExists() {
-        db = openOrCreateDatabase("breathe", SQLiteDatabase.CREATE_IF_NECESSARY, null);
-        Cursor c = null;
-        boolean tableExists = false;
-        try {
-            c = db.query("breathe", null, null, null, null, null, null);
-            tableExists = true;
-            c.close();
-        } catch (Exception e) {
-            System.out.println("Nope, no table");
-        }
-        return tableExists;
-    }
+    public void registerUser() {
+        Random pinGenerator = new Random();
+        int rand = pinGenerator.nextInt(10000000);
+        pin = String.valueOf(rand);
 
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("TBD/users/register");
+
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("pin", pin));
+
+        try {
+            HttpResponse response = httpClient.execute(httppost);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                String responseString = EntityUtils.toString(entity);
+                JSONObject responseJSON = new JSONObject(responseString);
+                System.out.println(responseJSON.get("sup"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -44,8 +44,6 @@ public class KeyHandler {
     int keySize = 1024;
     Context context;
     Calendar calendar;
-    Date start;
-    Date end;
 
 
     public void buildKeys(Context context) {

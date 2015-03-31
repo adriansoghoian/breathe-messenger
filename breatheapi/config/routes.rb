@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get 'messenger/index'
-  get 'messenger/test/:id' => 'messenger#test'
+  get '/user/create' => 'messenger#test'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
