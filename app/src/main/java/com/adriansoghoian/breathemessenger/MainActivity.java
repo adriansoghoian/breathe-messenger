@@ -126,7 +126,6 @@ public class MainActivity extends ActionBarActivity {
         db.execSQL(sqlQuery);
 
         sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "body TEXT, " +
                 "friend_id integer, " +
                 "FOREIGN KEY(friend_id) REFERENCES friend(id));";
         db.execSQL(sqlQuery);
@@ -135,6 +134,7 @@ public class MainActivity extends ActionBarActivity {
                    "body TEXT, " +
                    "conversation_id integer, " +
                    "friend_id integer, " +
+                   "from_me VARCHAR(100), " +
                    "FOREIGN KEY(friend_id) REFERENCES friends(id) " +
                    "FOREIGN KEY(conversation_id) REFERENCES conversations(id));";
         db.execSQL(sqlQuery);
