@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
-  get 'messenger/index'
-  get '/user/create' => 'messenger#test'
-
+  get 'messenger/index', defaults: {format: :json}
+  post '/user/create' => 'messenger#new_user', defaults: {format: :json}
+  post '/message/send' => 'messenger#new_message', defaults: {format: :json}
+  post 'message/refresh' => 'messenger#refresh_messages', defaults: {format: :json}
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

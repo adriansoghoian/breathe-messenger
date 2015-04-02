@@ -88,16 +88,20 @@ public class MainActivity extends ActionBarActivity {
         System.out.println("Current state is: " + currentState);
 
         System.out.println("We're in the create method!");
+
         if (currentState == null) {
             buildDB();
-            registerUser();
             Context context = getApplicationContext();
             keyHandler.buildKeys(context);
+            createNewUser();
             editor.putString("status", "success");
+            editor.putInt("messageCount", 0);
             editor.commit();
         } else {
             System.out.println("The app has been run before.");
         }
+//        String test = preferences.getString("pin", null);
+//        System.out.println("The PIN is: " + test);
         assembleView(this);
         try {
             fetchKeys();
@@ -142,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void buildDB() {
         SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
-        sqlQuery = "CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), name VARCHAR(100));";
+        sqlQuery = "CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100));";
         db.execSQL(sqlQuery);
 
         sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -155,41 +159,27 @@ public class MainActivity extends ActionBarActivity {
                    "conversation_id integer, " +
                    "friend_id integer, " +
                    "from_me VARCHAR(100), " +
+                   "message_count TEXT, " +
                    "FOREIGN KEY(friend_id) REFERENCES friends(id) " +
                    "FOREIGN KEY(conversation_id) REFERENCES conversations(id));";
         db.execSQL(sqlQuery);
         System.out.println("DB created successfully");
     }
 
-    public void fetchKeys() throws CertificateException, UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException, IOException {
-        publicKey = keyHandler.getPublicKey();
-        privateKey = keyHandler.getPrivateKey();
-    }
-
-    public void registerUser() {
+    public void createNewUser() {
         Random pinGenerator = new Random();
         int rand = pinGenerator.nextInt(10000000);
         pin = String.valueOf(rand);
+        new RegisterUserTask().execute(pin);
+        SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("pin", pin);
+        editor.commit();
+    }
 
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("TBD/users/register");
-
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("pin", pin));
-
-        try {
-            HttpResponse response = httpClient.execute(httppost);
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                String responseString = EntityUtils.toString(entity);
-                JSONObject responseJSON = new JSONObject(responseString);
-                System.out.println(responseJSON.get("sup"));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void fetchKeys() throws CertificateException, UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException, IOException {
+        publicKey = keyHandler.getPublicKey();
+        privateKey = keyHandler.getPrivateKey();
     }
 
     @Override
