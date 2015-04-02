@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -73,6 +75,7 @@ public class MainActivity extends ActionBarActivity {
     String recipientID;
     String currentState;
     SQLiteDatabase db;
+    RegisterUserTask registerNewUserTask;
 
 
     @Override
@@ -170,10 +173,13 @@ public class MainActivity extends ActionBarActivity {
         Random pinGenerator = new Random();
         int rand = pinGenerator.nextInt(10000000);
         pin = String.valueOf(rand);
-        new RegisterUserTask().execute(pin);
+        registerNewUserTask = new RegisterUserTask(this.getApplicationContext());
+        registerNewUserTask.execute(pin);
+
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("pin", pin);
+        System.out.println("Your PIN is: " + pin);
         editor.commit();
     }
 
@@ -201,5 +207,57 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class RegisterUserTask extends AsyncTask<String, Integer, String> {
+
+        String pin;
+        List<NameValuePair> nameValuePairs;
+        int rand;
+        Context context;
+        String secret;
+
+        @Override
+        public String doInBackground(String... params) {
+            try {
+                registerUser(params[0]);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public RegisterUserTask(Context c) {
+            this.context = c;
+        }
+
+        public void registerUser(String pin) throws UnsupportedEncodingException {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/user/create");
+
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("pin", pin));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            try {
+                HttpResponse response = httpClient.execute(httppost);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    String responseString = EntityUtils.toString(entity)    ;
+                    System.out.println(responseString);
+                    JSONObject responseJSON = new JSONObject(responseString);
+                    secret = responseJSON.get("secret").toString();
+                    SharedPreferences preferences = context.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString("secret", secret);
+                    editor.commit();
+                    // TODO - check response from server
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

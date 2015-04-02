@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -16,6 +17,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +33,7 @@ public class NewConversationActivity extends ActionBarActivity {
     EditText messageBody;
     String name;
     String body;
+    NewConversationTask newConversationTask;
 
 
     @Override
@@ -45,12 +50,13 @@ public class NewConversationActivity extends ActionBarActivity {
             public void onClick(View v) {
                 name = contactName.getText().toString();
                 body = messageBody.getText().toString();
+                System.out.println("Hello, we're in the on click method before async");
+                newConversationTask = new NewConversationTask();
+                newConversationTask.execute(name, body, "test");
+                System.out.println("Hello, we're in the on click method after async");
             }
         });
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,7 +71,6 @@ public class NewConversationActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -74,34 +79,45 @@ public class NewConversationActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    public class NewConversationTask extends AsyncTask<String, String, String> {
-//
-//        @Override
-//        protected String doInBackground(String... conversation) {
-//
-//            try {
-//                System.out.println(floor);
-//                httpPut();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        }
-//
-//        private void httpPut() throws IOException {
-//            HttpClient httpclient = new DefaultHttpClient();  // sets up the HTTP post
-//            HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/messages");
-//
-//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
-//            nameValuePairs.add(new BasicNameValuePair("floor", floor));
-//
-//            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//            HttpResponse httpResponse = httpclient.execute(httppost);
-//
-//            httpResponse.getEntity().consumeContent(); // closes out the request once its been made
-//        }
-//
-//    }
+    public class NewConversationTask extends AsyncTask<String, String, String> {
 
+        @Override
+        protected String doInBackground(String... conversation) {
 
+            try {
+                System.out.println("Hello, we're in the do in background section");
+                String recipientPIN = conversation[0];
+                String messageBody = conversation[1];
+                sendMessage(recipientPIN, messageBody);
+                System.out.println("we've just sent the message");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private void sendMessage(String pin, String message) throws IOException {
+            HttpClient httpClient = new DefaultHttpClient();  // sets up the HTTP post
+            HttpPost httpPost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/send");
+            System.out.println("we've just sent the message1");
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
+            nameValuePairs.add(new BasicNameValuePair("pin", pin));
+            nameValuePairs.add(new BasicNameValuePair("body", message));
+            System.out.println("we've just sent the message2");
+            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            try {
+                System.out.println("we've just sent the message4");
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpEntity entity = httpResponse.getEntity();
+                if (entity != null) {
+                    String responseString = EntityUtils.toString(entity)    ;
+                    System.out.println(responseString);
+                }
+                httpResponse.getEntity().consumeContent(); // closes out the request once its been made
+                System.out.println("we've just sent the message3");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
