@@ -15,7 +15,7 @@ class MessengerController < ApplicationController
     def new_message
         p params
         @user = User.find_by(pin: params[:pin])
-        @message = Message.new(body: params[:body])
+        @message = Message.new(body: params[:body], sender_pin: params[:senderPIN])
         if @message.save
             @message.save
             @user.messages << @message
@@ -38,9 +38,10 @@ class MessengerController < ApplicationController
             queue = []
             if num_messages_on_client >= @user.messages.length
                 render :json => {message: "No new messages 4 U."}
-            else 
-                @user.messages[num_messages_on_client-1...-1].each do |new_message|
-                    queue << {body: new_message.body}
+            else
+                p @user.messages[(num_messages_on_client-1)] 
+                @user.messages[(num_messages_on_client)..-1].each do |new_message|
+                    queue << {body: new_message.body, sender_pin: new_message.sender_pin}
                 end
                 render :json => {messages: queue}
             end

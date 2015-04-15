@@ -3,6 +3,7 @@ class CreateMessages < ActiveRecord::Migration
     create_table :messages do |t|
       t.string :body
       t.references :user
+      t.string :sender_pin
 
       t.timestamps
     end

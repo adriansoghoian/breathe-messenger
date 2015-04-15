@@ -28,6 +28,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,6 +71,7 @@ public class MainActivity extends ActionBarActivity {
     PublicKey publicKey;
     PrivateKey privateKey;
     String pin;
+    String status;
     Cryptosaurus cryptosaurus;
     String sqlQuery;
     String recipientID;
@@ -93,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
         System.out.println("We're in the create method!");
 
         if (currentState == null) {
+            status = "First run";
             buildDB();
             Context context = getApplicationContext();
             keyHandler.buildKeys(context);
@@ -101,10 +104,9 @@ public class MainActivity extends ActionBarActivity {
             editor.putInt("messageCount", 0);
             editor.commit();
         } else {
+            status = "Not first run";
             System.out.println("The app has been run before.");
         }
-//        String test = preferences.getString("pin", null);
-//        System.out.println("The PIN is: " + test);
         assembleView(this);
         try {
             fetchKeys();
@@ -129,15 +131,18 @@ public class MainActivity extends ActionBarActivity {
         Button new_conversation = (Button)findViewById(R.id.new_conversation);
 
         db = openOrCreateDatabase("breathe", Context.MODE_WORLD_READABLE, null);
-        c = db.rawQuery("SELECT * FROM conversations;", null);
+        c = db.rawQuery("SELECT * FROM friends;", null);
 
-        while (c.moveToNext()) {
-            recipientID = c.getString(1);
-            String contactLookup = "SELECT * FROM contacts WHERE id = " + recipientID + ";";
-            c_temp = db.rawQuery(contactLookup, null);
-            conversationList.add(c_temp.getString(2));
+        if (status == "Not first run") {
+            new refreshMessages(context).execute();
         }
-        conversationListUI.setAdapter(conversationListAdapter);
+//        while (c.moveToNext()) {
+//            recipientID = c.getString(1);
+//            String contactLookup = "SELECT * FROM contacts WHERE id = " + recipientID + ";";
+//            c_temp = db.rawQuery(contactLookup, null);
+//            conversationList.add(c_temp.getString(2));
+//        }
+//        conversationListUI.setAdapter(conversationListAdapter);
 
         new_conversation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,17 +154,17 @@ public class MainActivity extends ActionBarActivity {
 
     public void buildDB() {
         SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
-        sqlQuery = "CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100));";
+        sqlQuery = "CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100), UNIQUE(pin, pubkey));";
         db.execSQL(sqlQuery);
 
-        sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "friend_id integer, " +
-                "FOREIGN KEY(friend_id) REFERENCES friend(id));";
-        db.execSQL(sqlQuery);
+//        sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                "friend_id integer, " +
+//                "FOREIGN KEY(friend_id) REFERENCES friend(id));";
+//        db.execSQL(sqlQuery);
 
         sqlQuery = "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                    "body TEXT, " +
-                   "conversation_id integer, " +
+//                   "conversation_id integer, " +
                    "friend_id integer, " +
                    "from_me VARCHAR(100), " +
                    "message_count TEXT, " +
@@ -179,6 +184,7 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("pin", pin);
+        editor.putInt("numMessages", 0);
         System.out.println("Your PIN is: " + pin);
         editor.commit();
     }
@@ -260,4 +266,99 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
+    public class refreshMessages extends AsyncTask<String, Integer, String> {
+
+        Context context;
+        String pin;
+        String secret;
+        ArrayList<String> messageQueue;
+        String numMessagesBeforeReresh;
+        JSONArray messageQueueJSONArray;
+
+        @Override
+        public String doInBackground(String... params) {
+            try {
+                fetchMessages(pin, secret);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                System.out.println("Oops! Couldn't refresh messages");
+            }
+            return null;
+        }
+
+        public refreshMessages(Context c) {
+            SharedPreferences preferences = c.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
+            pin = preferences.getString("pin", null);
+            secret = preferences.getString("secret", null);
+            numMessagesBeforeReresh = Integer.toString(preferences.getInt("numMessages", 0));
+        }
+
+        public void fetchMessages(String pin, String secret) throws UnsupportedEncodingException {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/refresh");
+
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("pin", pin));
+            nameValuePairs.add(new BasicNameValuePair("secret", secret));
+            nameValuePairs.add(new BasicNameValuePair("message_count", numMessagesBeforeReresh));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            try {
+                HttpResponse response = httpClient.execute(httppost);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    String responseString = EntityUtils.toString(entity)    ;
+                    System.out.println(responseString);
+                    JSONObject responseJSON = new JSONObject(responseString);
+
+                    System.out.println(responseJSON.toString());
+                    System.out.println("Class is: " + responseJSON.get("messages").getClass());
+
+                    messageQueueJSONArray = responseJSON.getJSONArray("messages");
+                    if (messageQueueJSONArray.length() > 0) {
+                        for (int i = 0; i < messageQueueJSONArray.length(); i++) {
+                            JSONObject message = messageQueueJSONArray.getJSONObject(i);
+                            String senderPIN = message.getString("sender_pin");
+                            String messageBody = message.getString("body");
+                            messageQueue.add(senderPIN);
+                            messageQueue.add(messageBody);
+                        }
+                        updateDB(messageQueue, Integer.getInteger(numMessagesBeforeReresh));
+
+                    }
+                    // TODO - check response from server
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateDB(ArrayList<String> messages, int numberMessagesPreviously) {
+        String sqlQuery;
+        SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
+        Cursor c;
+        String friend_id;
+        int numReceivedMessages = 0;
+
+        for (int i = 0; i < messages.size(); i++) {
+            if (i % 2 == 0) {
+                String senderPIN = messages.get(i);
+                sqlQuery = "INSERT OR IGNORE INTO friends(pin) VALUES(" + senderPIN + ");";
+                db.execSQL(sqlQuery);
+                sqlQuery = "SELECT * FROM friends where pin = " + senderPIN + ";";
+                c = db.rawQuery(sqlQuery, null);
+                c.moveToFirst();
+                friend_id = c.getString(0);
+            } else {
+                String messageBody = messages.get(i);
+                sqlQuery = "INSERT OR IGNORE INTO messages(body, friend_id, from_me) VALUES(" + messageBody + ", ";
+
+            }
+
+        }
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.adriansoghoian.breathemessenger;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -33,11 +35,17 @@ public class NewConversationActivity extends ActionBarActivity {
     EditText messageBody;
     String name;
     String body;
+    String senderPIN;
     NewConversationTask newConversationTask;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        senderPIN = preferences.getString("pin", null);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_conversation);
 
@@ -50,10 +58,8 @@ public class NewConversationActivity extends ActionBarActivity {
             public void onClick(View v) {
                 name = contactName.getText().toString();
                 body = messageBody.getText().toString();
-                System.out.println("Hello, we're in the on click method before async");
                 newConversationTask = new NewConversationTask();
                 newConversationTask.execute(name, body, "test");
-                System.out.println("Hello, we're in the on click method after async");
             }
         });
     }
@@ -85,7 +91,6 @@ public class NewConversationActivity extends ActionBarActivity {
         protected String doInBackground(String... conversation) {
 
             try {
-                System.out.println("Hello, we're in the do in background section");
                 String recipientPIN = conversation[0];
                 String messageBody = conversation[1];
                 sendMessage(recipientPIN, messageBody);
@@ -99,14 +104,12 @@ public class NewConversationActivity extends ActionBarActivity {
         private void sendMessage(String pin, String message) throws IOException {
             HttpClient httpClient = new DefaultHttpClient();  // sets up the HTTP post
             HttpPost httpPost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/send");
-            System.out.println("we've just sent the message1");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
             nameValuePairs.add(new BasicNameValuePair("pin", pin));
-            nameValuePairs.add(new BasicNameValuePair("body", message));
-            System.out.println("we've just sent the message2");
+            nameValuePairs.add(new BasicNameValuePair("senderPIN", senderPIN)); // TODO - encrypt
+            nameValuePairs.add(new BasicNameValuePair("body", message)); // TODO - encrypt
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             try {
-                System.out.println("we've just sent the message4");
                 HttpResponse httpResponse = httpClient.execute(httpPost);
                 HttpEntity entity = httpResponse.getEntity();
                 if (entity != null) {
@@ -114,7 +117,6 @@ public class NewConversationActivity extends ActionBarActivity {
                     System.out.println(responseString);
                 }
                 httpResponse.getEntity().consumeContent(); // closes out the request once its been made
-                System.out.println("we've just sent the message3");
             } catch (IOException e) {
                 e.printStackTrace();
             }
