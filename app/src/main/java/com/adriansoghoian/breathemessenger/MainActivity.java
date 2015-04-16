@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.activeandroid.ActiveAndroid;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -90,17 +92,15 @@ public class MainActivity extends ActionBarActivity {
         currentState = preferences.getString("status", null);
 
         keyHandler = new KeyHandler();
+        ActiveAndroid.initialize(this);
         System.out.println("Current state is: " + currentState);
 
-        System.out.println("We're in the create method!");
-
         if (currentState == null) {
-            status = "First run";
             buildDB();
             Context context = getApplicationContext();
             keyHandler.buildKeys(context);
             createNewUser();
-            editor.putString("status", "success");
+            editor.putString("status", "First run.");
             editor.putInt("messageCount", 0);
             editor.commit();
         } else {
@@ -108,6 +108,7 @@ public class MainActivity extends ActionBarActivity {
             System.out.println("The app has been run before.");
         }
         assembleView(this);
+
         try {
             fetchKeys();
         } catch (CertificateException e) {
@@ -154,17 +155,17 @@ public class MainActivity extends ActionBarActivity {
 
     public void buildDB() {
         SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
-        sqlQuery = "CREATE TABLE IF NOT EXISTS friends (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100), UNIQUE(pin, pubkey));";
+        sqlQuery = "CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100), UNIQUE(pin, pubkey));";
         db.execSQL(sqlQuery);
 
-//        sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                "friend_id integer, " +
-//                "FOREIGN KEY(friend_id) REFERENCES friend(id));";
-//        db.execSQL(sqlQuery);
+        sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "friend_id integer, " +
+                "FOREIGN KEY(friend_id) REFERENCES friend(id));";
+        db.execSQL(sqlQuery);
 
         sqlQuery = "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                    "body TEXT, " +
-//                   "conversation_id integer, " +
+                   "conversation_id integer, " +
                    "friend_id integer, " +
                    "from_me VARCHAR(100), " +
                    "message_count TEXT, " +
