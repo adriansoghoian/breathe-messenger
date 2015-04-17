@@ -31,6 +31,7 @@ public class Cryptosaurus {
         ptxt = plaintext;
         ctxt = "Oops - weren't able to encrypt.";
         try {
+
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             ctxtRaw = cipher.doFinal(ptxt.getBytes());
@@ -38,6 +39,7 @@ public class Cryptosaurus {
             cipher2.init(Cipher.DECRYPT_MODE, privateKey);
             ptxtRaw = cipher2.doFinal(ctxtRaw);
             String ptxt = new String(ptxtRaw);
+
         } catch (NoSuchAlgorithmException e) {
             System.out.println("OOpz1");
             e.printStackTrace();

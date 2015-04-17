@@ -46,7 +46,7 @@ public class KeyHandler {
     Calendar calendar;
 
 
-    public void buildKeys(Context context) {
+    public PublicKey buildKeys(Context context) {
         Calendar notBefore = Calendar.getInstance();
         Calendar notAfter = Calendar.getInstance();
         notAfter.add(Calendar.YEAR, 1);
@@ -64,7 +64,6 @@ public class KeyHandler {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithmType, "AndroidKeyStore");
             keyPairGenerator.initialize(spec);
             keyPair = keyPairGenerator.generateKeyPair();
-
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Oops1");
             e.printStackTrace();
@@ -77,6 +76,7 @@ public class KeyHandler {
             System.out.println("Oops3");
             e.printStackTrace();
         }
+        return keyPair.getPublic();
     }
 
     public KeyHandler() {

@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -43,6 +44,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
@@ -92,16 +94,13 @@ public class MainActivity extends ActionBarActivity {
         currentState = preferences.getString("status", null);
 
         keyHandler = new KeyHandler();
-        ActiveAndroid.initialize(this);
         System.out.println("Current state is: " + currentState);
 
         if (currentState == null) {
-            buildDB();
             Context context = getApplicationContext();
-            keyHandler.buildKeys(context);
+            publicKey = keyHandler.buildKeys(context);
             createNewUser();
             editor.putString("status", "First run.");
-            editor.putInt("messageCount", 0);
             editor.commit();
         } else {
             status = "Not first run";
@@ -131,20 +130,9 @@ public class MainActivity extends ActionBarActivity {
         ArrayAdapter<String> conversationListAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, conversationList);
         Button new_conversation = (Button)findViewById(R.id.new_conversation);
 
-        db = openOrCreateDatabase("breathe", Context.MODE_WORLD_READABLE, null);
-        c = db.rawQuery("SELECT * FROM friends;", null);
-
         if (status == "Not first run") {
             new refreshMessages(context).execute();
         }
-//        while (c.moveToNext()) {
-//            recipientID = c.getString(1);
-//            String contactLookup = "SELECT * FROM contacts WHERE id = " + recipientID + ";";
-//            c_temp = db.rawQuery(contactLookup, null);
-//            conversationList.add(c_temp.getString(2));
-//        }
-//        conversationListUI.setAdapter(conversationListAdapter);
-
         new_conversation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,41 +141,25 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    public void buildDB() {
-        SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
-        sqlQuery = "CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, pin VARCHAR(100), pubkey VARCHAR(100), name VARCHAR(100), UNIQUE(pin, pubkey));";
-        db.execSQL(sqlQuery);
-
-        sqlQuery = "CREATE TABLE IF NOT EXISTS conversations (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "friend_id integer, " +
-                "FOREIGN KEY(friend_id) REFERENCES friend(id));";
-        db.execSQL(sqlQuery);
-
-        sqlQuery = "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                   "body TEXT, " +
-                   "conversation_id integer, " +
-                   "friend_id integer, " +
-                   "from_me VARCHAR(100), " +
-                   "message_count TEXT, " +
-                   "FOREIGN KEY(friend_id) REFERENCES friends(id) " +
-                   "FOREIGN KEY(conversation_id) REFERENCES conversations(id));";
-        db.execSQL(sqlQuery);
-        System.out.println("DB created successfully");
-    }
-
     public void createNewUser() {
-        Random pinGenerator = new Random();
-        int rand = pinGenerator.nextInt(10000000);
-        pin = String.valueOf(rand);
+        // Generates a random PIN
+        SecureRandom pinGen = new SecureRandom();
+        pin = new BigInteger(32, pinGen).toString(16);
+        System.out.println("The PIN is: " + pin);
         registerNewUserTask = new RegisterUserTask(this.getApplicationContext());
-        registerNewUserTask.execute(pin);
+        registerNewUserTask.execute(pin); // Sends the new PIN to the server, registering the user
+
+        Contact currentUser = new Contact();
+        currentUser.name = "You";
+        currentUser.pin = pin;
+        currentUser.pubKey = publicKey.toString();
+        currentUser.save(); // Saves the user's own credential to the local DB for future reference.
 
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("pin", pin);
-        editor.putInt("numMessages", 0);
-        System.out.println("Your PIN is: " + pin);
-        editor.commit();
+        editor.putInt("numMessages", 0); // Initializes the counter at 0.
+        editor.commit(); // Saves the PIN to the app's Shared Preferences as well.
     }
 
     public void fetchKeys() throws CertificateException, UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException, IOException {

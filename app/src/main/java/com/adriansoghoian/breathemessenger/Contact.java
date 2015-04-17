@@ -33,11 +33,16 @@ public class Contact extends Model {
         this.pubKey = pubKey;
     }
 
-    public static List<Conversation> getAll(Contact contact) {
+    public List<Conversation> conversations(Contact contact) {
         return new Select()
                 .from(Conversation.class)
                 .where("contact = ?", contact.getId())
                 .execute();
     }
 
+    public static List<Contact> getAllContacts() {
+        return new Select()
+                .from(Contact.class)
+                .execute();
+    }
 }
