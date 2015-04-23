@@ -1,7 +1,5 @@
 package com.adriansoghoian.breathemessenger;
 
-import android.content.Context;
-
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpHost;
@@ -19,6 +17,7 @@ public class TorWrapper {
 
     // constructors
     private TorWrapper(){
+        // TODO: should start TOR connection / orbot here as well
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpHost proxy = new HttpHost(PROXY_HOST, PROXY_PORT);
         httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
