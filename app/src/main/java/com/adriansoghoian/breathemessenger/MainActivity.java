@@ -124,9 +124,11 @@ public class MainActivity extends ActionBarActivity {
                 List<Conversation> conversationList = Conversation.getAll();
                 Conversation selectedConversation = conversationList.get(position);
                 String conversationContactPIN = selectedConversation.contact.pin;
+
                 conversationActivityIntent = new Intent();
                 conversationActivityIntent.putExtra("ContactPIN", conversationContactPIN);
-                startActivity(new Intent(getApplicationContext(), ConversationActivity.class));
+                conversationActivityIntent.setClass(getApplicationContext(), ConversationActivity.class);
+                startActivity(conversationActivityIntent);
             }
         });
 
