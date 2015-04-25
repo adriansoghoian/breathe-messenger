@@ -3,6 +3,7 @@ package com.adriansoghoian.breathemessenger;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class Conversation extends Model {
     public Conversation(Contact contact) {
         super();
         this.contact = contact;
+    }
+
+    public static List<Conversation> getAll() {
+        return new Select()
+                .from(Conversation.class)
+                .execute();
     }
 
 

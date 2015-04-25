@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,8 +71,8 @@ public class MainActivity extends ActionBarActivity {
     Cursor c_temp;
     HttpClient httpClient;
     int i;
+    Intent conversationActivityIntent;
     KeyHandler keyHandler;
-    ListView conversationListUI;
     PublicKey publicKey;
     PrivateKey privateKey;
     String pin;
@@ -80,7 +81,9 @@ public class MainActivity extends ActionBarActivity {
     String sqlQuery;
     String recipientID;
     String currentState;
+    TextView pinView;
     SQLiteDatabase db;
+    ListView conversationListUI;
     RegisterUserTask registerNewUserTask;
 
 
@@ -100,14 +103,39 @@ public class MainActivity extends ActionBarActivity {
             Context context = getApplicationContext();
             publicKey = keyHandler.buildKeys(context);
             createNewUser();
-            editor.putString("status", "First run.");
+            editor.putString("status", "Preferences already set.");
             editor.commit();
         } else {
             status = "Not first run";
             System.out.println("The app has been run before.");
         }
-        assembleView(this);
+        Button new_conversation = (Button)findViewById(R.id.new_conversation);
+        TextView pinView = (TextView)findViewById(R.id.pin);
+        pinView.setText(preferences.getString("pin", null));
+        ListView conversationListUI = (ListView)findViewById(R.id.conversationListUI);
 
+        if (status == "Not first run") {
+            new refreshMessages(this).execute();
+        }
+        conversationListUI.setClickable(true);
+        conversationListUI.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                List<Conversation> conversationList = Conversation.getAll();
+                Conversation selectedConversation = conversationList.get(position);
+                String conversationContactPIN = selectedConversation.contact.pin;
+                conversationActivityIntent = new Intent();
+                conversationActivityIntent.putExtra("ContactPIN", conversationContactPIN);
+                startActivity(new Intent(getApplicationContext(), ConversationActivity.class));
+            }
+        });
+
+        new_conversation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), NewConversationActivity.class));
+            }
+        });
         try {
             fetchKeys();
         } catch (CertificateException e) {
@@ -122,23 +150,6 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
         cryptosaurus = new Cryptosaurus(publicKey, privateKey);
-    }
-
-    public void assembleView(Context context) {
-        ListView conversationListUI = (ListView)findViewById(R.id.conversationListUI);
-        ArrayList<String> conversationList = new ArrayList<String>();
-        ArrayAdapter<String> conversationListAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, conversationList);
-        Button new_conversation = (Button)findViewById(R.id.new_conversation);
-
-        if (status == "Not first run") {
-            new refreshMessages(context).execute();
-        }
-        new_conversation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), NewConversationActivity.class));
-            }
-        });
     }
 
     public void createNewUser() {
@@ -184,6 +195,10 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_conversations) {
             return true;
         }
+        if (id == R.id.action_contacts) {
+            startActivity(new Intent(this, ContactListActivity.class));
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -226,6 +241,7 @@ public class MainActivity extends ActionBarActivity {
                     System.out.println(responseString);
                     JSONObject responseJSON = new JSONObject(responseString);
                     secret = responseJSON.get("secret").toString();
+                    System.out.println("New user created. Secret is: " + secret);
                     SharedPreferences preferences = context.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("secret", secret);
@@ -244,9 +260,11 @@ public class MainActivity extends ActionBarActivity {
         Context context;
         String pin;
         String secret;
-        ArrayList<String> messageQueue;
         String numMessagesBeforeReresh;
         JSONArray messageQueueJSONArray;
+        List<Conversation> conversationlist;
+        ArrayList<String> conversationNameList = new ArrayList<>();
+
 
         @Override
         public String doInBackground(String... params) {
@@ -256,10 +274,22 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
                 System.out.println("Oops! Couldn't refresh messages");
             }
-            return null;
+            return "WAHOO";
+        }
+
+        protected void onPostExecute(String result) {
+            conversationlist = Conversation.getAll();
+            for (int i = 0; i < conversationlist.size(); i++) {
+                conversationNameList.add(conversationlist.get(i).contact.pin);
+            }
+            ListView conversationListUI = (ListView)findViewById(R.id.conversationListUI);
+            ArrayAdapter<String> conversationListAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, conversationNameList);
+            conversationListUI.setAdapter(conversationListAdapter);
+
         }
 
         public refreshMessages(Context c) {
+            context = c;
             SharedPreferences preferences = c.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
             pin = preferences.getString("pin", null);
             secret = preferences.getString("secret", null);
@@ -288,7 +318,10 @@ public class MainActivity extends ActionBarActivity {
                     System.out.println("Class is: " + responseJSON.get("messages").getClass());
 
                     messageQueueJSONArray = responseJSON.getJSONArray("messages");
+
                     if (messageQueueJSONArray.length() > 0) {
+                        ArrayList<String> messageQueue = new ArrayList<>();
+                        System.out.println("The number of new messages is: " + messageQueueJSONArray.length());
                         for (int i = 0; i < messageQueueJSONArray.length(); i++) {
                             JSONObject message = messageQueueJSONArray.getJSONObject(i);
                             String senderPIN = message.getString("sender_pin");
@@ -296,10 +329,13 @@ public class MainActivity extends ActionBarActivity {
                             messageQueue.add(senderPIN);
                             messageQueue.add(messageBody);
                         }
-                        updateDB(messageQueue, Integer.getInteger(numMessagesBeforeReresh));
-
+                        int numMessagesAfterRefresh = Integer.valueOf(numMessagesBeforeReresh) + messageQueueJSONArray.length();
+                        SharedPreferences preferences = getApplicationContext().getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putInt("numMessages", numMessagesAfterRefresh);
+                        editor.commit();
+                        updateDB(messageQueue);
                     }
-                    // TODO - check response from server
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -309,28 +345,32 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void updateDB(ArrayList<String> messages, int numberMessagesPreviously) {
-        String sqlQuery;
-        SQLiteDatabase db = openOrCreateDatabase("breathe", Context.MODE_WORLD_WRITEABLE, null);
-        Cursor c;
-        String friend_id;
-        int numReceivedMessages = 0;
+    public void updateDB(ArrayList<String> messages) {
+        Contact sender;
+        Conversation conversation;
+        Message message;
 
-        for (int i = 0; i < messages.size(); i++) {
-            if (i % 2 == 0) {
-                String senderPIN = messages.get(i);
-                sqlQuery = "INSERT OR IGNORE INTO friends(pin) VALUES(" + senderPIN + ");";
-                db.execSQL(sqlQuery);
-                sqlQuery = "SELECT * FROM friends where pin = " + senderPIN + ";";
-                c = db.rawQuery(sqlQuery, null);
-                c.moveToFirst();
-                friend_id = c.getString(0);
-            } else {
-                String messageBody = messages.get(i);
-                sqlQuery = "INSERT OR IGNORE INTO messages(body, friend_id, from_me) VALUES(" + messageBody + ", ";
-
+        for (int i = 0; i < messages.size() / 2; i++) {
+            // The Message queue is populated in this way: senderPIN1, messagebody1, senderPIN2, messagebody2, etc.
+            sender = Contact.getByPin(messages.get(i*2));
+            if (sender == null) {
+                sender = new Contact();
+                sender.pin = messages.get(i*2);
+                sender.name = "NAME";
+                sender.pubKey = "PUBKEY";
+                sender.save();
             }
-
+            conversation = Contact.findConversation(sender);
+            if (conversation == null) {
+                conversation = new Conversation();
+                conversation.contact = sender;
+                conversation.save();
+            }
+            message = new Message();
+            message.body = messages.get(i*2 + 1);
+            message.contact = sender;
+            message.conversation = conversation;
+            message.save();
         }
     }
 

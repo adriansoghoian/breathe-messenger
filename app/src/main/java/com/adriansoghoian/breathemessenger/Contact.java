@@ -33,11 +33,22 @@ public class Contact extends Model {
         this.pubKey = pubKey;
     }
 
-    public List<Conversation> conversations(Contact contact) {
+    public static Contact getByPin(String pin) {
+        return new Select()
+                .from(Contact.class)
+                .where("pin = ?", pin)
+                .executeSingle();
+    }
+
+    public static Contact getCurrentUser() {
+        return Contact.load(Contact.class, 1);
+    }
+
+    public static Conversation findConversation(Contact contact) {
         return new Select()
                 .from(Conversation.class)
                 .where("contact = ?", contact.getId())
-                .execute();
+                .executeSingle();
     }
 
     public static List<Contact> getAllContacts() {
@@ -45,4 +56,9 @@ public class Contact extends Model {
                 .from(Contact.class)
                 .execute();
     }
+
+
+
+
+
 }

@@ -12,6 +12,7 @@ class MessengerController < ApplicationController
         end
     end
 
+
     def new_message
         p params
         @user = User.find_by(pin: params[:pin])
@@ -29,9 +30,7 @@ class MessengerController < ApplicationController
     def refresh_messages
         num_messages_on_client = params[:message_count].to_i
         @user = User.find_by(pin: params[:pin])
-        p params[:secret]
-        p @user.secret
-        p @user.secret == params[:secret]
+        p params
         if params[:secret] != @user.secret
             render :json => {response: "STOP TRYING TO HACK US"} 
         else 
@@ -43,6 +42,7 @@ class MessengerController < ApplicationController
                 @user.messages[(num_messages_on_client)..-1].each do |new_message|
                     queue << {body: new_message.body, sender_pin: new_message.sender_pin}
                 end
+                p queue
                 render :json => {messages: queue}
             end
         end
