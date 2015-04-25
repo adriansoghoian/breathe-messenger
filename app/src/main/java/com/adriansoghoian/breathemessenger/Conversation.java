@@ -31,5 +31,13 @@ public class Conversation extends Model {
                 .execute();
     }
 
+    public static List<Message> getAllMessages(Conversation conversation) {
+        return new Select()
+                .from(Message.class)
+                .where("conversation = ?", conversation.getId())
+                .execute();
+    }
+
+
 
 }
