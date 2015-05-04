@@ -3,12 +3,16 @@ package com.adriansoghoian.breathemessenger;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,7 +55,7 @@ public class ConversationActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
         ListView messageListView = (ListView)findViewById(R.id.messageListView);
-        Button sendMessage = (Button)findViewById(R.id.sendMessage);
+        final Button sendMessage = (Button)findViewById(R.id.sendMessage);
         final EditText newMessageEditText = (EditText)findViewById(R.id.newMessage);
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
         selfPIN = preferences.getString("pin", null);
@@ -70,7 +74,8 @@ public class ConversationActivity extends ActionBarActivity {
             messageBuffer = messageBuffer + messageList.get(i).body;
             messageContents.add(messageBuffer);
         }
-        final ArrayAdapter<String> messageListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, messageContents);
+
+        messageListAdapter = new CustomListAdapter(ConversationActivity.this, R.layout.custom_list, messageContents);
         messageListView.setAdapter(messageListAdapter);
 
         sendMessage.setOnClickListener(new View.OnClickListener() {
@@ -81,6 +86,18 @@ public class ConversationActivity extends ActionBarActivity {
                 newMessageTask.execute(selfPIN, contactPIN, newMessageBody);
             }
         });
+
+        newMessageEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager m = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (m != null) {
+                    m.toggleSoftInput(0, InputMethodManager.SHOW_IMPLICIT);
+                    newMessageEditText.requestFocus();
+                }
+            }
+        });
+
     }
 
     public class NewMessageTask extends AsyncTask<String, String, String> {
@@ -159,4 +176,42 @@ public class ConversationActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private class CustomListAdapter extends ArrayAdapter {
+
+        private Context mContext;
+        private int id;
+        private List <String>items ;
+
+        public CustomListAdapter(Context context, int textViewResourceId , List<String> list )
+        {
+            super(context, textViewResourceId, list);
+            mContext = context;
+            id = textViewResourceId;
+            items = list ;
+        }
+
+        @Override
+        public View getView(int position, View v, ViewGroup parent)
+        {
+            View mView = v;
+            if(mView == null){
+                LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mView = vi.inflate(id, null);
+            }
+
+            TextView text = (TextView) mView.findViewById(R.id.textView);
+
+            if(items.get(position) != null )
+            {
+                text.setTextColor(Color.BLACK);
+                text.setText(items.get(position));
+                text.setBackgroundColor(Color.WHITE);
+            }
+
+            return mView;
+        }
+
+    }
+
 }

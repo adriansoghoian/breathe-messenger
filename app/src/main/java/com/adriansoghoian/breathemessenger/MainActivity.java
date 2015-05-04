@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -64,6 +67,7 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
 public class MainActivity extends ActionBarActivity {
 
     ArrayList<String> conversationList;
+    ArrayList<String> conversationNameList = new ArrayList<>(); // List of the recipient names / PINs to display on main activity.
     ArrayAdapter<String> conversationListAdapter;
     boolean dbExists;
     Button new_conversation;
@@ -257,6 +261,21 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     }
+
+    public void updateConversationListView() { // This method updates the ListView of all the conversations.
+        List<Conversation> conversationlist = Conversation.getAll(); // Fetches all the conversations from the DB.
+        System.out.println("Number of conversations: " + conversationlist.size());
+        if (conversationlist.size() > 0) {
+            for (int i = 0; i < conversationlist.size(); i++) {
+                conversationNameList.add(conversationlist.get(i).contact.pin); // Adds the string of their PINs.
+            }
+            ListView conversationListUI = (ListView)findViewById(R.id.conversationListUI); // Binds the ListView to the Adapter
+//            ArrayAdapter<String> conversationListAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_expandable_list_item_1, conversationNameList);
+            conversationListAdapter = new CustomListAdapter(MainActivity.this, R.layout.custom_list, conversationNameList);
+            conversationListUI.setAdapter(conversationListAdapter);
+        }
+    }
+
     public class refreshMessages extends AsyncTask<String, Integer, String> {
 
         Context context;
@@ -280,14 +299,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
-            conversationlist = Conversation.getAll();
-            for (int i = 0; i < conversationlist.size(); i++) {
-                conversationNameList.add(conversationlist.get(i).contact.pin);
-            }
-            ListView conversationListUI = (ListView)findViewById(R.id.conversationListUI);
-            ArrayAdapter<String> conversationListAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_expandable_list_item_1, conversationNameList);
-            conversationListUI.setAdapter(conversationListAdapter);
-
+            updateConversationListView();
         }
 
         public refreshMessages(Context c) {
@@ -309,28 +321,27 @@ public class MainActivity extends ActionBarActivity {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             try {
-                HttpResponse response = httpClient.execute(httppost);
+                HttpResponse response = httpClient.execute(httppost); // Unpacking the JSON server response.
                 HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    String responseString = EntityUtils.toString(entity)    ;
+                String responseString = EntityUtils.toString(entity);
+                JSONObject responseJSON = new JSONObject(responseString);
+                if (responseJSON.get("messages") != "No new messages 4 U.") { // If there are messages, proceed.
                     System.out.println(responseString);
-                    JSONObject responseJSON = new JSONObject(responseString);
-
-                    System.out.println(responseJSON.toString());
-                    System.out.println("Class is: " + responseJSON.get("messages").getClass());
-
                     messageQueueJSONArray = responseJSON.getJSONArray("messages");
 
-                    if (messageQueueJSONArray.length() > 0) {
-                        ArrayList<String> messageQueue = new ArrayList<>();
+                    if (messageQueueJSONArray.length() > 0) { // If there are messages...
                         System.out.println("The number of new messages is: " + messageQueueJSONArray.length());
+                        ArrayList<String> messageQueue = new ArrayList<>();
+                        System.out.println("Here is the message array payload: " + messageQueueJSONArray);
                         for (int i = 0; i < messageQueueJSONArray.length(); i++) {
                             JSONObject message = messageQueueJSONArray.getJSONObject(i);
                             String senderPIN = message.getString("sender_pin");
                             String messageBody = message.getString("body");
-                            messageQueue.add(senderPIN);
+                            messageQueue.add(senderPIN); // Add the PIN and message body contents to an ArrayList.
                             messageQueue.add(messageBody);
                         }
+                        // This updates the global numMessages which is persisted in the Shared Settings. This is used to fetch
+                        // new messages.
                         int numMessagesAfterRefresh = Integer.valueOf(numMessagesBeforeReresh) + messageQueueJSONArray.length();
                         SharedPreferences preferences = getApplicationContext().getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
@@ -374,6 +385,43 @@ public class MainActivity extends ActionBarActivity {
             message.conversation = conversation;
             message.save();
         }
+    }
+
+    private class CustomListAdapter extends ArrayAdapter {
+
+        private Context mContext;
+        private int id;
+        private List <String>items ;
+
+        public CustomListAdapter(Context context, int textViewResourceId , List<String> list )
+        {
+            super(context, textViewResourceId, list);
+            mContext = context;
+            id = textViewResourceId;
+            items = list ;
+        }
+
+        @Override
+        public View getView(int position, View v, ViewGroup parent)
+        {
+            View mView = v;
+            if(mView == null){
+                LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mView = vi.inflate(id, null);
+            }
+
+            TextView text = (TextView) mView.findViewById(R.id.textView);
+
+            if(items.get(position) != null )
+            {
+                text.setTextColor(Color.BLACK);
+                text.setText(items.get(position));
+                text.setBackgroundColor(Color.WHITE);
+            }
+
+            return mView;
+        }
+
     }
 
 }

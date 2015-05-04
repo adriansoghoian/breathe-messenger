@@ -14,9 +14,14 @@ class MessengerController < ApplicationController
 
 
     def new_message
+        p "Receiving a new message. Here are the params: "
         p params
+        p "*"*50
         @user = User.find_by(pin: params[:pin])
-        @message = Message.new(body: params[:body], sender_pin: params[:senderPIN])
+        @message = Message.new(body: params[:body], sender_pin: params[:senderPin])
+        p "Here is the new message object being created:"
+        p @message
+        p "*"*50
         if @message.save
             @message.save
             @user.messages << @message
@@ -30,7 +35,6 @@ class MessengerController < ApplicationController
     def refresh_messages
         num_messages_on_client = params[:message_count].to_i
         @user = User.find_by(pin: params[:pin])
-        p params
         if params[:secret] != @user.secret
             render :json => {response: "STOP TRYING TO HACK US"} 
         else 
@@ -38,11 +42,14 @@ class MessengerController < ApplicationController
             if num_messages_on_client >= @user.messages.length
                 render :json => {message: "No new messages 4 U."}
             else
-                p @user.messages[(num_messages_on_client-1)] 
+                p "Refreshing messages; looks like there are undelivered messages."
+                p "Here they are: "
                 @user.messages[(num_messages_on_client)..-1].each do |new_message|
+                    p "Message: "
+                    p new_message
+                    p "*"*10
                     queue << {body: new_message.body, sender_pin: new_message.sender_pin}
                 end
-                p queue
                 render :json => {messages: queue}
             end
         end
