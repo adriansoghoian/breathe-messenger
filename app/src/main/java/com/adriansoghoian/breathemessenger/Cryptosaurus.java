@@ -31,7 +31,6 @@ public class Cryptosaurus {
         ptxt = plaintext;
         ctxt = "Oops - weren't able to encrypt.";
         try {
-
             Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             ctxtRaw = cipher.doFinal(ptxt.getBytes());

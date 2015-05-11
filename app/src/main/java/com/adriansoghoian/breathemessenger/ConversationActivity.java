@@ -208,7 +208,6 @@ public class ConversationActivity extends ActionBarActivity {
                 text.setText(items.get(position));
                 text.setBackgroundColor(Color.WHITE);
             }
-
             return mView;
         }
 
