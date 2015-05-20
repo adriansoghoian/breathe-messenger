@@ -17,21 +17,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.activeandroid.ActiveAndroid;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -41,9 +35,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -51,17 +42,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -73,7 +55,6 @@ public class MainActivity extends ActionBarActivity {
     Button new_conversation;
     Cursor c;
     Cursor c_temp;
-    HttpClient httpClient;
     int i;
     Intent conversationActivityIntent;
     KeyHandler keyHandler;
@@ -232,7 +213,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public void registerUser(String pin) throws UnsupportedEncodingException {
-            HttpClient httpClient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/user/create");
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -240,7 +220,7 @@ public class MainActivity extends ActionBarActivity {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             try {
-                HttpResponse response = httpClient.execute(httppost);
+                HttpResponse response = TorWrapper.getInstance().execute(httppost);
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
                     String responseString = EntityUtils.toString(entity)    ;
@@ -311,7 +291,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public void fetchMessages(String pin, String secret) throws UnsupportedEncodingException {
-            HttpClient httpClient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/refresh");
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -321,7 +300,7 @@ public class MainActivity extends ActionBarActivity {
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             try {
-                HttpResponse response = httpClient.execute(httppost); // Unpacking the JSON server response.
+                HttpResponse response = TorWrapper.getInstance().execute(httppost);
                 HttpEntity entity = response.getEntity();
                 String responseString = EntityUtils.toString(entity);
                 JSONObject responseJSON = new JSONObject(responseString);

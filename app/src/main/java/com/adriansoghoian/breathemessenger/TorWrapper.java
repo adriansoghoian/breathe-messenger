@@ -23,7 +23,7 @@ public class TorWrapper {
 
     // constructors
     private TorWrapper(){
-        // TODO: should start TOR connection / orbot here as well
+        // TODO: should start TOR connection here, otherwise must be running orbot
         HttpClient httpclient = null;
 
         // set client based on proxy type
@@ -42,6 +42,7 @@ public class TorWrapper {
         }
 
         client = httpclient;
+        System.out.println(client.getClass());
     }
 
     // thread safe singleton access
