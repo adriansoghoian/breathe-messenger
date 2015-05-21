@@ -14,14 +14,10 @@ import android.widget.EditText;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,7 +98,6 @@ public class NewConversationActivity extends ActionBarActivity {
         }
 
         private void sendMessage(String pin, String message) throws IOException {
-            HttpClient httpClient = new DefaultHttpClient();  // sets up the HTTP post
             HttpPost httpPost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/send");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
             nameValuePairs.add(new BasicNameValuePair("pin", pin));
@@ -110,7 +105,7 @@ public class NewConversationActivity extends ActionBarActivity {
             nameValuePairs.add(new BasicNameValuePair("body", message)); // TODO - encrypt
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             try {
-                HttpResponse httpResponse = httpClient.execute(httpPost);
+                HttpResponse httpResponse = TorWrapper.getInstance().execute(httpPost);
                 HttpEntity entity = httpResponse.getEntity();
                 if (entity != null) {
                     String responseString = EntityUtils.toString(entity)    ;
