@@ -6,6 +6,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.methods.HttpGet;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -42,7 +43,17 @@ public class TorWrapper {
         }
 
         client = httpclient;
-        System.out.println(client.getClass());
+
+        // sanity checks
+        System.out.println("AKDBG: " + client.getClass());
+        HttpGet httpGet = new HttpGet("https://google.com");
+        HttpResponse response = this.execute(httpGet);
+        try {
+            System.out.println("AKDBG: " + response.getStatusLine().getStatusCode());
+        }
+        catch(Exception esssss){
+            System.out.println("AKDBG: ERROR ON GET STATUS CODE");
+        }
     }
 
     // thread safe singleton access
