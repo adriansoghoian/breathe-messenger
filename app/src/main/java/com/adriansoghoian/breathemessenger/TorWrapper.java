@@ -17,9 +17,9 @@ public class TorWrapper {
     // fields
     private static TorWrapper instance = null;
     private static HttpClient client;
-    private final static Proxy.Type proxyType = Proxy.Type.SOCKS; // prefer SOCKS, HTTP leaks!
-    private final static String PROXY_HOST = "127.0.0.1";
-    private final static int PROXY_PORT = 9050; // 8118 for HTTP, 9050 for SOCKS
+    private final static Proxy.Type proxyType = Proxy.Type.HTTP;
+    private final static String PROXY_HOST = "localhost"; // 127.0.0.1 (Home Sweet Home)
+    private final static int PROXY_PORT = 8118; // 8118 for HTTP, 9050 for SOCKS
 
     // constructors
     private TorWrapper(){
