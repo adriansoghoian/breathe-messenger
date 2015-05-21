@@ -12,7 +12,6 @@ class MessengerController < ApplicationController
         end
     end
 
-
     def new_message
         p "Receiving a new message. Here are the params: "
         p params
