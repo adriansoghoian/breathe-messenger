@@ -10,7 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Contact name"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#FFFFFF"
+        android:hint="Contact name"
         android:ems="10"
         android:id="@+id/contactName"
         android:layout_alignParentTop="true"
@@ -20,7 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
-        android:text="Compose message"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#FFFFFF"
+        android:hint="Compose message"
         android:ems="10"
         android:id="@+id/messageBody"
         android:layout_below="@+id/contactName"
@@ -31,8 +35,11 @@
         android:layout_height="wrap_content"
         android:text="Start conversation"
         android:id="@+id/startConversation"
+        android:background="#3C88E3"
+        android:textColor="#FFFFFF"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="97dp" />
+        android:layout_marginBottom="10dp"
+        android:padding="10dp" />
 
 </RelativeLayout>
