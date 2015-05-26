@@ -393,9 +393,9 @@ public class MainActivity extends ActionBarActivity {
 
             if(items.get(position) != null )
             {
-                text.setTextColor(Color.BLACK);
+                text.setTextColor(Color.WHITE/*BLACK*/);
                 text.setText(items.get(position));
-                text.setBackgroundColor(Color.WHITE);
+                // text.setBackgroundColor(Color.WHITE);
             }
 
             return mView;
