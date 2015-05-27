@@ -90,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
             editor.commit();
         } else {
             status = "Not first run";
+            updateConversationListView();
             System.out.println("The app has been run before.");
         }
 
