@@ -1,6 +1,7 @@
 package com.adriansoghoian.breathemessenger;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -32,6 +33,7 @@ public class NewConversationActivity extends ActionBarActivity {
     Message newMessage;
     Button startConversation;
     EditText contactName;
+    Intent conversationActivityIntent;
     EditText messageBody;
     String name;
     String body;
@@ -70,8 +72,6 @@ public class NewConversationActivity extends ActionBarActivity {
                 System.out.println(Contact.getByPin(recipientPin).pubKey);
                 newConversation.save();
 
-                System.out.println("conversation PIN: " + newConversation.contact.pin);
-
                 newMessage.contact = currentUser;
                 newMessage.body = body;
                 newMessage.conversation = newConversation;
@@ -108,19 +108,30 @@ public class NewConversationActivity extends ActionBarActivity {
 
     public class NewConversationTask extends AsyncTask<String, String, String> {
 
+        String messageBody;
+        String senderPin;
+        String recipientPin;
+
         @Override
         protected String doInBackground(String... conversation) {
 
             try {
-                String recipientPin = conversation[0];
-                String messageBody = conversation[1];
-                String senderPin = conversation[2];
+                recipientPin = conversation[0];
+                messageBody = conversation[1];
+                senderPin = conversation[2];
                 sendMessage(recipientPin, messageBody, senderPin);
                 System.out.println("we've just sent the message");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        protected void onPostExecute(String result) {
+            Intent conversationActivityIntent = new Intent();
+            conversationActivityIntent.putExtra("ContactPIN", recipientPin);
+            conversationActivityIntent.setClass(getApplicationContext(), ConversationActivity.class);
+            startActivity(conversationActivityIntent);
         }
 
         private void sendMessage(String recipientPin, String messageBody, String senderPin) throws IOException {
