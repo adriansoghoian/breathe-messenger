@@ -53,4 +53,8 @@ class MessengerController < ApplicationController
             end
         end
     end
+
+    def fetch_key 
+        p params
+    end
 end

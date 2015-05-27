@@ -55,7 +55,7 @@ public class ContactListActivity extends ActionBarActivity {
         newContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Hellooooo I'm about to add a new contact!");
+                startActivity(new Intent(getApplicationContext(), NewContactActivity.class));
             }
         });
     }

@@ -53,9 +53,6 @@ public class MainActivity extends ActionBarActivity {
     ArrayAdapter<String> conversationListAdapter;
     boolean dbExists;
     Button new_conversation;
-    Cursor c;
-    Cursor c_temp;
-    int i;
     Intent conversationActivityIntent;
     KeyHandler keyHandler;
     PublicKey publicKey;
@@ -63,8 +60,6 @@ public class MainActivity extends ActionBarActivity {
     String pin;
     String status;
     Cryptosaurus cryptosaurus;
-    String sqlQuery;
-    String recipientID;
     String currentState;
     TextView pinView;
     SQLiteDatabase db;

@@ -9,4 +9,5 @@
     <string name="new_conversation">Start a new conversation.</string>
     <string name="title_activity_contact_list">Contacts</string>
     <string name="title_activity_conversation">Chat securely</string>
+    <string name="title_activity_new_contact">Add a contact</string>
 </resources>

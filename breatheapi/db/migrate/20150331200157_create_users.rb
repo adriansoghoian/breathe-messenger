@@ -4,6 +4,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :pin
       t.integer :message_count
       t.string :secret
+      t.string :key
 
       t.timestamps
     end
