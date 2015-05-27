@@ -4,7 +4,7 @@ class MessengerController < ApplicationController
 
     def new_user
         p params
-        @user = User.new(pin: params[:pin])
+        @user = User.new(pin: params[:pin], key: params[:key])
         if @user.save
             render :json => {response: "New user saved.", secret: @user.secret}
         else
@@ -17,7 +17,7 @@ class MessengerController < ApplicationController
         p params
         p "*"*50
         @user = User.find_by(pin: params[:pin])
-        @message = Message.new(body: params[:body], sender_pin: params[:senderPin])
+        @message = Message.new(body: params[:body], sender_pin: params[:sender_pin])
         p "Here is the new message object being created:"
         p @message
         p "*"*50
@@ -51,6 +51,15 @@ class MessengerController < ApplicationController
                 end
                 render :json => {messages: queue}
             end
+        end
+    end
+
+    def fetch_key 
+        @user = User.find_by(pin: params[:pin])
+        if @user 
+            render :json => {response: @user.key}
+        else 
+            render :json => {response: "Nope, can't find that user."}
         end
     end
 end

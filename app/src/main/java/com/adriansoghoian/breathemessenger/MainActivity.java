@@ -53,18 +53,14 @@ public class MainActivity extends ActionBarActivity {
     ArrayAdapter<String> conversationListAdapter;
     boolean dbExists;
     Button new_conversation;
-    Cursor c;
-    Cursor c_temp;
-    int i;
     Intent conversationActivityIntent;
     KeyHandler keyHandler;
     PublicKey publicKey;
     PrivateKey privateKey;
+    String publicKeyString;
     String pin;
     String status;
     Cryptosaurus cryptosaurus;
-    String sqlQuery;
-    String recipientID;
     String currentState;
     TextView pinView;
     SQLiteDatabase db;
@@ -87,13 +83,16 @@ public class MainActivity extends ActionBarActivity {
         if (currentState == null) {
             Context context = getApplicationContext();
             publicKey = keyHandler.buildKeys(context);
-            createNewUser();
             editor.putString("status", "Preferences already set.");
+            publicKeyString = publicKey.toString();
+            createNewUser(publicKeyString);
+            editor.putString("publicKey", publicKeyString);
             editor.commit();
         } else {
             status = "Not first run";
             System.out.println("The app has been run before.");
         }
+
         Button new_conversation = (Button)findViewById(R.id.new_conversation);
         TextView pinView = (TextView)findViewById(R.id.pin);
         pinView.setText(preferences.getString("pin", null));
@@ -139,18 +138,20 @@ public class MainActivity extends ActionBarActivity {
         cryptosaurus = new Cryptosaurus(publicKey, privateKey);
     }
 
-    public void createNewUser() {
+    public void createNewUser(String pk) {
         // Generates a random PIN
         SecureRandom pinGen = new SecureRandom();
         pin = new BigInteger(32, pinGen).toString(16);
         System.out.println("The PIN is: " + pin);
         registerNewUserTask = new RegisterUserTask(this.getApplicationContext());
-        registerNewUserTask.execute(pin); // Sends the new PIN to the server, registering the user
+        publicKeyString = pk;
+
+        registerNewUserTask.execute(pin, publicKeyString); // Sends the new PIN, publicKey to the server, registering the user.
 
         Contact currentUser = new Contact();
         currentUser.name = "You";
         currentUser.pin = pin;
-        currentUser.pubKey = publicKey.toString();
+        currentUser.pubKey = publicKeyString;
         currentUser.save(); // Saves the user's own credential to the local DB for future reference.
 
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
@@ -201,7 +202,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public String doInBackground(String... params) {
             try {
-                registerUser(params[0]);
+                registerUser(params[0], params[1]);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -212,11 +213,12 @@ public class MainActivity extends ActionBarActivity {
             this.context = c;
         }
 
-        public void registerUser(String pin) throws UnsupportedEncodingException {
+        public void registerUser(String pin, String pk) throws UnsupportedEncodingException {
             HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/user/create");
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("pin", pin));
+            nameValuePairs.add(new BasicNameValuePair("key", pk));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             try {
@@ -397,7 +399,6 @@ public class MainActivity extends ActionBarActivity {
                 text.setText(items.get(position));
                 // text.setBackgroundColor(Color.WHITE);
             }
-
             return mView;
         }
 
