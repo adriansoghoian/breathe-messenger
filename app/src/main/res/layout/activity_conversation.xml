@@ -7,36 +7,39 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_height="375dp"
         android:id="@+id/messageListView"
         android:layout_alignParentStart="true" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
         android:id="@+id/newMessage"
         android:textColorHint="#AAAAAA"
         android:textColor="#FFFFFF"
         android:hint="Compose message"
         android:layout_below="@+id/messageListView"
-        android:layout_alignEnd="@+id/sendMessage"
-        android:layout_alignParentStart="true" />
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:textColorHint="#444444"
+        android:textColor="#000000"
+        android:gravity="top"
+        android:background="#FFFFFF"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:hint="New message" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="Reply"
         android:id="@+id/sendMessage"
+        android:layout_below="@id/newMessage"
         android:background="#3C88E3"
         android:textColor="#FFFFFF"
-        android:padding="10dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-
-
-/>
-
-
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp" />
 
 </RelativeLayout>
