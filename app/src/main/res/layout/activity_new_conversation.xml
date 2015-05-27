@@ -12,7 +12,7 @@
         android:inputType="textPersonName"
         android:textColorHint="#AAAAAA"
         android:textColor="#FFFFFF"
-        android:hint="Contact name"
+        android:hint="Contact pin"
         android:ems="10"
         android:id="@+id/contactName"
         android:layout_alignParentTop="true"

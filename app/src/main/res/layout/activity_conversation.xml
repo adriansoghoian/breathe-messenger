@@ -26,12 +26,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
+        android:background="#3C88E3"
+        android:textColor="#FFFFFF"
         android:id="@+id/sendMessage"
+<<<<<<< HEAD
         android:background="#3C88E3"
         android:textColor="#FFFFFF"
         android:padding="10dp"
+=======
+>>>>>>> 8b8d73064387478dbcab7cc1b7621c95ce16d05d
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp" />
 
 
 
