@@ -263,6 +263,7 @@ public class MainActivity extends ActionBarActivity {
         Context context;
         String pin;
         String secret;
+        boolean newMessages;
         String numMessagesBeforeReresh;
         JSONArray messageQueueJSONArray;
         List<Conversation> conversationlist;
@@ -281,7 +282,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
-            updateConversationListView();
+            if (newMessages) {
+                updateConversationListView();
+            }
         }
 
         public refreshMessages(Context c) {
@@ -309,8 +312,10 @@ public class MainActivity extends ActionBarActivity {
                 if (responseJSON.get("messages") != "No new messages 4 U.") { // If there are messages, proceed.
                     System.out.println(responseString);
                     messageQueueJSONArray = responseJSON.getJSONArray("messages");
+                    newMessages = false;
 
                     if (messageQueueJSONArray.length() > 0) { // If there are messages...
+                        newMessages = true;
                         System.out.println("The number of new messages is: " + messageQueueJSONArray.length());
                         ArrayList<String> messageQueue = new ArrayList<>();
                         System.out.println("Here is the message array payload: " + messageQueueJSONArray);

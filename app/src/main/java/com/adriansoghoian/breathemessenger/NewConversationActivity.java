@@ -61,13 +61,23 @@ public class NewConversationActivity extends ActionBarActivity {
                 body = messageBody.getText().toString();
 
                 currentUser = Contact.getCurrentUser();
-                newMessage = new Message();
-                newConversation = new Conversation();
-                newMessage.contact = Contact.getByPin(recipientPin);
+                Conversation newConversation = new Conversation();
+
+                Message newMessage = new Message();
+                newConversation.contact = Contact.getByPin(recipientPin);
+
+                System.out.println("Recipient Pin: " + recipientPin);
+                System.out.println(Contact.getByPin(recipientPin).pubKey);
+                newConversation.save();
+
+                System.out.println("conversation PIN: " + newConversation.contact.pin);
+
+                newMessage.contact = currentUser;
                 newMessage.body = body;
                 newMessage.conversation = newConversation;
+                System.out.println("new message body: " + newMessage.body);
+                System.out.println("conversation PIN: " + newConversation.contact.pin);
                 newMessage.save();
-                newConversation.save();
 
                 newConversationTask = new NewConversationTask();
                 newConversationTask.execute(recipientPin, body, senderPin);
