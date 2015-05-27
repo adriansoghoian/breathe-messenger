@@ -58,4 +58,28 @@ public class Cryptosaurus {
         return ptxt;
     }
 
+    public String serializePublicKey(PublicKey pubKey) {
+        String test = "adrian";
+        return test;
+    }
+
+    public PublicKey deserializePublicKey(String pubKeyString) {
+        return new PublicKey() {
+            @Override
+            public String getAlgorithm() {
+                return null;
+            }
+
+            @Override
+            public String getFormat() {
+                return null;
+            }
+
+            @Override
+            public byte[] getEncoded() {
+                return new byte[0];
+            }
+        };
+    }
+
 }

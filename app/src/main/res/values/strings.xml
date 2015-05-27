@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BreatheMessenger</string>
+    <string name="app_name">Breathe</string>
 
     <string name="pubkey">No string, sadly</string>
     <string name="action_settings">Settings</string>
@@ -7,6 +7,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="new_conversation">Start a new conversation.</string>
-    <string name="title_activity_contact_list">ContactListActivity</string>
-    <string name="title_activity_conversation">ConversationActivity</string>
+    <string name="title_activity_contact_list">Contacts</string>
+    <string name="title_activity_conversation">Chat securely</string>
 </resources>
