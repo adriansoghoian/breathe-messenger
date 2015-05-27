@@ -24,9 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
+        android:background="#3C88E3"
+        android:textColor="#FFFFFF"
         android:id="@+id/sendMessage"
-        android:layout_below="@id/newMessage"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp" />
 
 </RelativeLayout>
