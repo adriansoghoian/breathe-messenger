@@ -4,7 +4,7 @@ class MessengerController < ApplicationController
 
     def new_user
         p params
-        @user = User.new(pin: params[:pin])
+        @user = User.new(pin: params[:pin], key: params[:key])
         if @user.save
             render :json => {response: "New user saved.", secret: @user.secret}
         else
@@ -55,6 +55,11 @@ class MessengerController < ApplicationController
     end
 
     def fetch_key 
-        p params
+        @user = User.find_by(pin: params[:pin])
+        if @user 
+            render :json => {response: @user.key}
+        else 
+            render :json => {response: "Nope, can't find that user."}
+        end
     end
 end
