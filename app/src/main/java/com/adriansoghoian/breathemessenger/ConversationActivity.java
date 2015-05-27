@@ -99,6 +99,7 @@ public class ConversationActivity extends ActionBarActivity {
     }
 
     public class NewMessageTask extends AsyncTask<String, String, String> {
+
         String selfPIN;
         String contactPIN;
         String newMessageBody;
@@ -121,21 +122,21 @@ public class ConversationActivity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             newMessage = new Message();
             newMessage.body = newMessageBody;
-            newMessage.contact = contact;
+            newMessage.contact = Contact.getCurrentUser();
             newMessage.conversation = conversation;
             newMessage.save();
 
             String messageBuffer = "";
-            messageBuffer = contactPIN + ": " + newMessageBody;
+            messageBuffer = "You: " + newMessageBody;
             messageContents.add(messageBuffer);
-            messageListView.setAdapter(messageListAdapter);
+//            messageListView.setAdapter(messageListAdapter);
         }
 
         private void sendMessage(String selfPIN, String contactPIN, String newMessageBody) throws IOException {
             HttpPost httpPost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/send");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
             nameValuePairs.add(new BasicNameValuePair("pin", contactPIN));
-            nameValuePairs.add(new BasicNameValuePair("senderPIN", selfPIN)); // TODO - encrypt
+            nameValuePairs.add(new BasicNameValuePair("sender_pin", selfPIN)); // TODO - encrypt
             nameValuePairs.add(new BasicNameValuePair("body", newMessageBody)); // TODO - encrypt
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             try {
