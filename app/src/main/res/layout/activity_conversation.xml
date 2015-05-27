@@ -7,7 +7,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="375dp"
+        android:layout_height="175dp"
         android:id="@+id/messageListView"
         android:layout_alignParentStart="true" />
 
@@ -28,10 +28,9 @@
 
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="Reply"
         android:id="@+id/sendMessage"
-        android:layout_below="@id/newMessage"
         android:background="#3C88E3"
         android:textColor="#FFFFFF"
         android:layout_alignParentBottom="true"
