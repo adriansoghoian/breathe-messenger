@@ -44,7 +44,10 @@ public class ContactListActivity extends ActionBarActivity {
         contactList = Contact.getAllContacts(); // fetches all contacts in DB (including user's own info)
 
         for (int i=0; i < contactList.size(); i++) {
+            System.out.println("I: " + i);
+            System.out.println("Your PIN:" + yourPin);
             tempPin = contactList.get(i).pin;
+            System.out.println("Their pin: " + tempPin);
             if (!yourPin.equals(tempPin)) {
                 contactListContents.add(contactList.get(i).pin);
             }

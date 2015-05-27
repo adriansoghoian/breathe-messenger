@@ -83,9 +83,9 @@ public class MainActivity extends ActionBarActivity {
         if (currentState == null) {
             Context context = getApplicationContext();
             publicKey = keyHandler.buildKeys(context);
-            createNewUser();
             editor.putString("status", "Preferences already set.");
             publicKeyString = publicKey.toString();
+            createNewUser(publicKeyString);
             editor.putString("publicKey", publicKeyString);
             editor.commit();
         } else {
@@ -137,12 +137,14 @@ public class MainActivity extends ActionBarActivity {
         cryptosaurus = new Cryptosaurus(publicKey, privateKey);
     }
 
-    public void createNewUser() {
+    public void createNewUser(String pk) {
         // Generates a random PIN
         SecureRandom pinGen = new SecureRandom();
         pin = new BigInteger(32, pinGen).toString(16);
         System.out.println("The PIN is: " + pin);
         registerNewUserTask = new RegisterUserTask(this.getApplicationContext());
+        publicKeyString = pk;
+
         registerNewUserTask.execute(pin, publicKeyString); // Sends the new PIN, publicKey to the server, registering the user.
 
         Contact currentUser = new Contact();
@@ -215,7 +217,7 @@ public class MainActivity extends ActionBarActivity {
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("pin", pin));
-            nameValuePairs.add(new BasicNameValuePair("publicKey", pk));
+            nameValuePairs.add(new BasicNameValuePair("key", pk));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
             try {

@@ -1,6 +1,7 @@
 package com.adriansoghoian.breathemessenger;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -54,14 +55,13 @@ public class NewContactActivity extends ActionBarActivity {
     public class NewContactTask extends AsyncTask<String, Integer, String> {
 
         List<NameValuePair> nameValuePairs;
-        int rand;
         Context context;
-        String secret;
+        Contact newContact;
 
         @Override
         public String doInBackground(String... params) {
             try {
-                registerUser(params[0]);
+                fetchKey(params[0]);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -72,7 +72,11 @@ public class NewContactActivity extends ActionBarActivity {
             this.context = c;
         }
 
-        public void registerUser(String pin) throws UnsupportedEncodingException {
+        protected void onPostExecute(String result) {
+            startActivity(new Intent(getApplicationContext(), ContactListActivity.class));
+        }
+
+        public void fetchKey(String pin) throws UnsupportedEncodingException {
             HttpPost httppost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/user/key");
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -86,8 +90,15 @@ public class NewContactActivity extends ActionBarActivity {
                     String responseString = EntityUtils.toString(entity)    ;
                     System.out.println(responseString);
                     JSONObject responseJSON = new JSONObject(responseString);
-                    String contactKey = responseJSON.get("key").toString();
+                    String contactKey = responseJSON.get("response").toString();
                     System.out.println("User fetched with key: " + contactKey);
+
+                    newContact = new Contact();
+                    newContact.pin = pin;
+                    newContact.pubKey = contactKey;
+                    newContact.save();
+
+                    System.out.println(newContact.pubKey);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

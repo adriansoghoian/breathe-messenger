@@ -17,7 +17,7 @@ class MessengerController < ApplicationController
         p params
         p "*"*50
         @user = User.find_by(pin: params[:pin])
-        @message = Message.new(body: params[:body], sender_pin: params[:senderPin])
+        @message = Message.new(body: params[:body], sender_pin: params[:sender_pin])
         p "Here is the new message object being created:"
         p @message
         p "*"*50

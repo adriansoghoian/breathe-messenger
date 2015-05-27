@@ -42,19 +42,30 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44117647" vertical-offset="3975" max-vertical-offset="5520">
-              <caret line="315" column="25" selection-start-line="315" selection-start-column="25" selection-end-line="315" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.46449703" vertical-offset="3908" max-vertical-offset="5550">
+              <caret line="314" column="45" selection-start-line="314" selection-start-column="45" selection-end-line="314" selection-end-column="45" />
               <folding>
-                <element signature="e#3724#4463#0" expanded="true" />
-                <element signature="e#4452#4453#0" expanded="true" />
-                <element signature="e#4511#4726#0" expanded="true" />
-                <element signature="e#4715#4716#0" expanded="true" />
-                <element signature="e#7809#7810#0" expanded="true" />
-                <element signature="e#7849#7850#0" expanded="true" />
-                <element signature="e#8113#8128#0" expanded="true" />
-                <element signature="e#11284#11285#0" expanded="true" />
-                <element signature="e#11336#11337#0" expanded="true" />
+                <element signature="e#3739#4478#0" expanded="true" />
+                <element signature="e#4467#4468#0" expanded="true" />
+                <element signature="e#4526#4741#0" expanded="true" />
+                <element signature="e#4730#4731#0" expanded="true" />
+                <element signature="e#7864#7865#0" expanded="true" />
+                <element signature="e#7904#7905#0" expanded="true" />
+                <element signature="e#8168#8183#0" expanded="true" />
+                <element signature="e#11333#11334#0" expanded="true" />
+                <element signature="e#11385#11386#0" expanded="true" />
+                <element signature="e#12075#12090#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="KeyHandler.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/KeyHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="795" max-vertical-offset="1260">
+              <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -62,12 +73,12 @@
       <file leaf-file-name="ContactListActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/ContactListActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="569" max-vertical-offset="1980">
-              <caret line="56" column="41" selection-start-line="56" selection-start-column="41" selection-end-line="56" selection-end-column="41" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="810" max-vertical-offset="2025">
+              <caret line="60" column="38" selection-start-line="60" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2054#2264#0" expanded="true" />
-                <element signature="e#2253#2254#0" expanded="true" />
+                <element signature="e#2209#2419#0" expanded="true" />
+                <element signature="e#2408#2409#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -76,15 +87,26 @@
       <file leaf-file-name="NewContactActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/NewContactActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="434" max-vertical-offset="1920">
-              <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="988" max-vertical-offset="2085">
+              <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1676#1677#0" expanded="true" />
-                <element signature="e#2203#2204#0" expanded="true" />
-                <element signature="e#2243#2244#0" expanded="true" />
-                <element signature="e#2493#2508#0" expanded="true" />
+                <element signature="e#1398#1718#0" expanded="true" />
+                <element signature="e#1707#1708#0" expanded="true" />
+                <element signature="e#2217#2218#0" expanded="true" />
+                <element signature="e#2257#2258#0" expanded="true" />
+                <element signature="e#2659#2674#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Contact.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/Contact.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="523" max-vertical-offset="900">
+              <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -1399,10 +1421,10 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/Cryptosaurus.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_contact_list.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/ContactListActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_new_contact.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/NewContactActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/ContactListActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/NewContactActivity.java" />
       </list>
     </option>
   </component>
@@ -1878,7 +1900,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-2" y="23" width="1190" height="709" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1892,8 +1914,8 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40809444" sideWeight="0.6180782" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32546374" sideWeight="0.49958506" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4856661" sideWeight="0.38066202" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31703204" sideWeight="0.38066202" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3292683" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32675222" sideWeight="0.49958506" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24912892" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1981,15 +2003,16 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="2340" max-vertical-offset="4035">
           <caret line="165" column="67" selection-start-line="165" selection-start-column="67" selection-end-line="165" selection-end-column="67" />
           <folding>
-            <element signature="e#3724#4463#0" expanded="true" />
-            <element signature="e#4452#4453#0" expanded="true" />
-            <element signature="e#4511#4726#0" expanded="true" />
-            <element signature="e#4715#4716#0" expanded="true" />
-            <element signature="e#7809#7810#0" expanded="true" />
-            <element signature="e#7849#7850#0" expanded="true" />
-            <element signature="e#8113#8128#0" expanded="true" />
-            <element signature="e#11284#11285#0" expanded="true" />
-            <element signature="e#11336#11337#0" expanded="true" />
+            <element signature="e#3739#4478#0" expanded="true" />
+            <element signature="e#4467#4468#0" expanded="true" />
+            <element signature="e#4526#4741#0" expanded="true" />
+            <element signature="e#4730#4731#0" expanded="true" />
+            <element signature="e#7864#7865#0" expanded="true" />
+            <element signature="e#7904#7905#0" expanded="true" />
+            <element signature="e#8168#8183#0" expanded="true" />
+            <element signature="e#11333#11334#0" expanded="true" />
+            <element signature="e#11385#11386#0" expanded="true" />
+            <element signature="e#12075#12090#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2020,15 +2043,16 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1095">
           <caret line="31" column="36" selection-start-line="31" selection-start-column="36" selection-end-line="31" selection-end-column="36" />
           <folding>
-            <element signature="e#3724#4463#0" expanded="true" />
-            <element signature="e#4452#4453#0" expanded="true" />
-            <element signature="e#4511#4726#0" expanded="true" />
-            <element signature="e#4715#4716#0" expanded="true" />
-            <element signature="e#7809#7810#0" expanded="true" />
-            <element signature="e#7849#7850#0" expanded="true" />
-            <element signature="e#8113#8128#0" expanded="true" />
-            <element signature="e#11284#11285#0" expanded="true" />
-            <element signature="e#11336#11337#0" expanded="true" />
+            <element signature="e#3739#4478#0" expanded="true" />
+            <element signature="e#4467#4468#0" expanded="true" />
+            <element signature="e#4526#4741#0" expanded="true" />
+            <element signature="e#4730#4731#0" expanded="true" />
+            <element signature="e#7864#7865#0" expanded="true" />
+            <element signature="e#7904#7905#0" expanded="true" />
+            <element signature="e#8168#8183#0" expanded="true" />
+            <element signature="e#11333#11334#0" expanded="true" />
+            <element signature="e#11385#11386#0" expanded="true" />
+            <element signature="e#12075#12090#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2127,13 +2151,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
           <caret line="3" column="28" selection-start-line="3" selection-start-column="28" selection-end-line="3" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/KeyHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="1605">
-          <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -2314,14 +2331,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/Contact.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="900">
-          <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider editor-type-id="android-designer">
         <state />
@@ -2387,18 +2396,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/ContactListActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="569" max-vertical-offset="1980">
-          <caret line="56" column="41" selection-start-line="56" selection-start-column="41" selection-end-line="56" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2054#2264#0" expanded="true" />
-            <element signature="e#2253#2254#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_new_contact.xml">
       <provider editor-type-id="android-designer">
         <state />
@@ -2415,34 +2412,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/NewContactActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/KeyHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="434" max-vertical-offset="1920">
-          <caret line="44" column="16" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="795" max-vertical-offset="1260">
+          <caret line="39" column="20" selection-start-line="39" selection-start-column="20" selection-end-line="39" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/Contact.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="900">
+          <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/ContactListActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="810" max-vertical-offset="2025">
+          <caret line="60" column="38" selection-start-line="60" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1676#1677#0" expanded="true" />
-            <element signature="e#2203#2204#0" expanded="true" />
-            <element signature="e#2243#2244#0" expanded="true" />
-            <element signature="e#2493#2508#0" expanded="true" />
+            <element signature="e#2209#2419#0" expanded="true" />
+            <element signature="e#2408#2409#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/NewContactActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="988" max-vertical-offset="2085">
+          <caret line="116" column="0" selection-start-line="116" selection-start-column="0" selection-end-line="116" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1398#1718#0" expanded="true" />
+            <element signature="e#1707#1708#0" expanded="true" />
+            <element signature="e#2217#2218#0" expanded="true" />
+            <element signature="e#2257#2258#0" expanded="true" />
+            <element signature="e#2659#2674#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/adriansoghoian/breathemessenger/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44117647" vertical-offset="3975" max-vertical-offset="5520">
-          <caret line="315" column="25" selection-start-line="315" selection-start-column="25" selection-end-line="315" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.46449703" vertical-offset="3908" max-vertical-offset="5550">
+          <caret line="314" column="45" selection-start-line="314" selection-start-column="45" selection-end-line="314" selection-end-column="45" />
           <folding>
-            <element signature="e#3724#4463#0" expanded="true" />
-            <element signature="e#4452#4453#0" expanded="true" />
-            <element signature="e#4511#4726#0" expanded="true" />
-            <element signature="e#4715#4716#0" expanded="true" />
-            <element signature="e#7809#7810#0" expanded="true" />
-            <element signature="e#7849#7850#0" expanded="true" />
-            <element signature="e#8113#8128#0" expanded="true" />
-            <element signature="e#11284#11285#0" expanded="true" />
-            <element signature="e#11336#11337#0" expanded="true" />
+            <element signature="e#3739#4478#0" expanded="true" />
+            <element signature="e#4467#4468#0" expanded="true" />
+            <element signature="e#4526#4741#0" expanded="true" />
+            <element signature="e#4730#4731#0" expanded="true" />
+            <element signature="e#7864#7865#0" expanded="true" />
+            <element signature="e#7904#7905#0" expanded="true" />
+            <element signature="e#8168#8183#0" expanded="true" />
+            <element signature="e#11333#11334#0" expanded="true" />
+            <element signature="e#11385#11386#0" expanded="true" />
+            <element signature="e#12075#12090#0" expanded="true" />
           </folding>
         </state>
       </provider>
