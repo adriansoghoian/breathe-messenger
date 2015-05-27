@@ -15,18 +15,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/newMessage"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#FFFFFF"
+        android:hint="Compose message"
         android:layout_below="@+id/messageListView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:text="New message" />
+        android:layout_alignEnd="@+id/sendMessage"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
         android:id="@+id/sendMessage"
-        android:layout_below="@id/newMessage"
+        android:background="#3C88E3"
+        android:textColor="#FFFFFF"
+        android:padding="10dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+
+
+/>
+
+
 
 </RelativeLayout>

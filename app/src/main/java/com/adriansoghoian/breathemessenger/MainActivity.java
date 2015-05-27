@@ -92,6 +92,7 @@ public class MainActivity extends ActionBarActivity {
             status = "Not first run";
             System.out.println("The app has been run before.");
         }
+
         Button new_conversation = (Button)findViewById(R.id.new_conversation);
         TextView pinView = (TextView)findViewById(R.id.pin);
         pinView.setText(preferences.getString("pin", null));
@@ -398,7 +399,6 @@ public class MainActivity extends ActionBarActivity {
                 text.setText(items.get(position));
                 // text.setBackgroundColor(Color.WHITE);
             }
-
             return mView;
         }
 
