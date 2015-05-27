@@ -1,6 +1,7 @@
 package com.adriansoghoian.breathemessenger;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -26,12 +27,18 @@ import java.util.List;
 
 public class NewConversationActivity extends ActionBarActivity {
 
+
+    Contact currentUser;
+    Conversation newConversation;
+    Message newMessage;
     Button startConversation;
     EditText contactName;
+    Intent conversationActivityIntent;
     EditText messageBody;
     String name;
     String body;
-    String senderPIN;
+    String recipientPin;
+    String senderPin;
     NewConversationTask newConversationTask;
 
 
@@ -40,7 +47,7 @@ public class NewConversationActivity extends ActionBarActivity {
 
         SharedPreferences preferences = this.getSharedPreferences("com.adriansoghoian.breathemessenger", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        senderPIN = preferences.getString("pin", null);
+        senderPin = preferences.getString("pin", null);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_conversation);
@@ -52,10 +59,28 @@ public class NewConversationActivity extends ActionBarActivity {
         startConversation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                name = contactName.getText().toString();
+                recipientPin = contactName.getText().toString();
                 body = messageBody.getText().toString();
+
+                currentUser = Contact.getCurrentUser();
+                Conversation newConversation = new Conversation();
+
+                Message newMessage = new Message();
+                newConversation.contact = Contact.getByPin(recipientPin);
+
+                System.out.println("Recipient Pin: " + recipientPin);
+                System.out.println(Contact.getByPin(recipientPin).pubKey);
+                newConversation.save();
+
+                newMessage.contact = currentUser;
+                newMessage.body = body;
+                newMessage.conversation = newConversation;
+                System.out.println("new message body: " + newMessage.body);
+                System.out.println("conversation PIN: " + newConversation.contact.pin);
+                newMessage.save();
+
                 newConversationTask = new NewConversationTask();
-                newConversationTask.execute(name, body, "test");
+                newConversationTask.execute(recipientPin, body, senderPin);
             }
         });
     }
@@ -83,13 +108,18 @@ public class NewConversationActivity extends ActionBarActivity {
 
     public class NewConversationTask extends AsyncTask<String, String, String> {
 
+        String messageBody;
+        String senderPin;
+        String recipientPin;
+
         @Override
         protected String doInBackground(String... conversation) {
 
             try {
-                String recipientPIN = conversation[0];
-                String messageBody = conversation[1];
-                sendMessage(recipientPIN, messageBody);
+                recipientPin = conversation[0];
+                messageBody = conversation[1];
+                senderPin = conversation[2];
+                sendMessage(recipientPin, messageBody, senderPin);
                 System.out.println("we've just sent the message");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -97,12 +127,19 @@ public class NewConversationActivity extends ActionBarActivity {
             return null;
         }
 
-        private void sendMessage(String pin, String message) throws IOException {
+        protected void onPostExecute(String result) {
+            Intent conversationActivityIntent = new Intent();
+            conversationActivityIntent.putExtra("ContactPIN", recipientPin);
+            conversationActivityIntent.setClass(getApplicationContext(), ConversationActivity.class);
+            startActivity(conversationActivityIntent);
+        }
+
+        private void sendMessage(String recipientPin, String messageBody, String senderPin) throws IOException {
             HttpPost httpPost = new HttpPost("https://blooming-cliffs-4171.herokuapp.com/message/send");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(); // loads up the request with the floor
-            nameValuePairs.add(new BasicNameValuePair("pin", pin));
-            nameValuePairs.add(new BasicNameValuePair("senderPIN", senderPIN)); // TODO - encrypt
-            nameValuePairs.add(new BasicNameValuePair("body", message)); // TODO - encrypt
+            nameValuePairs.add(new BasicNameValuePair("pin", recipientPin));
+            nameValuePairs.add(new BasicNameValuePair("sender_pin", senderPin)); // TODO - encrypt
+            nameValuePairs.add(new BasicNameValuePair("body", messageBody)); // TODO - encrypt
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             try {
                 HttpResponse httpResponse = TorWrapper.getInstance().execute(httpPost);
